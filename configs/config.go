@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	Feeds []FeedConfig
+	Timezone string       `yaml:"timezone"`
+	Feeds    []FeedConfig `yaml:"feeds"`
 }
 
-func (c *Config) FeedByName(name string) (*FeedConfig) {
+func (c *Config) FeedByName(name string) *FeedConfig {
 	for _, f := range c.Feeds {
 		if f.Name == name {
 			return &f
@@ -20,8 +21,9 @@ func (c *Config) FeedByName(name string) (*FeedConfig) {
 }
 
 const configEnvVar = "DASHY_CONFIG_PATH"
+const configPath = "config.yml"
 
-func ReadConfig(argPath string) (*Config, error) {
+func ReadConfig() (*Config, error) {
 	var (
 		c   Config
 		bs  []byte
@@ -31,9 +33,8 @@ func ReadConfig(argPath string) (*Config, error) {
 	var path string
 	if os.Getenv(configEnvVar) != "" {
 		path = os.Getenv(configEnvVar)
-	}
-	if argPath != "" {
-		path = argPath
+	} else {
+		path = configPath
 	}
 
 	bs, err = os.ReadFile(path)

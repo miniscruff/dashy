@@ -11,15 +11,6 @@ type Config struct {
 	Feeds    []FeedConfig `yaml:"feeds"`
 }
 
-func (c *Config) FeedByName(name string) *FeedConfig {
-	for _, f := range c.Feeds {
-		if f.Name == name {
-			return &f
-		}
-	}
-	return nil
-}
-
 const configEnvVar = "DASHY_CONFIG_PATH"
 const configPath = "config.yml"
 

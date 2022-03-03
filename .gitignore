@@ -13,4 +13,4 @@
 
 # local data
 .env
-config.yml
+configs/config.yml

@@ -1,8 +1,6 @@
 package configs
 
 import (
-	"os"
-
 	"gopkg.in/yaml.v2"
 )
 
@@ -12,29 +10,13 @@ type Config struct {
 	View     string       `yaml:"view"`
 }
 
-const configEnvVar = "DASHY_CONFIG_PATH"
-const configPath = "config.yml"
+//go:embed config.yml
+var configBytes []byte
 
 func ReadConfig() (*Config, error) {
-	var (
-		c   Config
-		bs  []byte
-		err error
-	)
+	var c   Config
 
-	var path string
-	if os.Getenv(configEnvVar) != "" {
-		path = os.Getenv(configEnvVar)
-	} else {
-		path = configPath
-	}
-
-	bs, err = os.ReadFile(path)
-	if err != nil {
-		return &c, err
-	}
-
-	err = yaml.Unmarshal(bs, &c)
+	err := yaml.Unmarshal(configBytes, &c)
 	if err != nil {
 		return &c, err
 	}

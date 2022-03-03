@@ -6,7 +6,6 @@ import (
 )
 
 type Config struct {
-	Timezone string       `yaml:"timezone"`
 	Feeds    []FeedConfig `yaml:"feeds"`
 	View     string       `yaml:"view"`
 }

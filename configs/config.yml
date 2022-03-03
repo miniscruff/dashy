@@ -1,0 +1,75 @@
+feeds:
+  - name: changie
+    query:
+      headers:
+        authorization: "env:GITHUB_AUTH"
+        content-type: "application/json; charset=utf-8"
+      url: https://api.github.com/graphql
+      method: POST
+      body: '{ "query": "{
+        repository(name: \"changie\", owner: \"miniscruff\") {
+          stargazerCount
+          forkCount
+          issues(states: OPEN) {
+            totalCount
+          }
+        }
+      }" }'
+      status: 200
+    schedule:
+      every: 3h
+    store:
+    - name: stars
+      path: "data.repository.stargazerCount"
+    - name: issues
+      path: "data.repository.issues.totalCount"
+    - name: forks
+      path: "data.repository.forkCount"
+
+  - name: hourlyWeather
+    query:
+      url: https://api.weatherbit.io/v2.0/forecast/hourly
+      params:
+        key: "env:WEATHERBIT_AUTH"
+        hours: 24
+        lat: "env:HOME_LAT"
+        lon: "env:HOME_LON"
+        units: I
+      status: 200
+    schedule:
+      every: 2h
+    store:
+      - name: temperatures
+        path: "data.#.temp"
+        count: 24
+      - name: times
+        path: "data.#.timestamp_utc"
+        count: 24
+
+  - name: dailyWeather
+    query:
+      url: https://api.weatherbit.io/v2.0/forecast/daily
+      params:
+        key: "env:WEATHERBIT_AUTH"
+        days: 1
+        lat: "env:HOME_LAT"
+        lon: "env:HOME_LON"
+        units: I
+      status: 200
+    schedule:
+      every: 12h
+    store:
+      - name: sunset
+        path: "data.0.sunset_ts"
+
+view: |
+  <h1>Dashboard</h1>
+  <h2>Changie</h2>
+  <div><strong>Stars</strong>{{.changieStars}}</div>
+  <div><strong>Forks</strong>{{.changieForks}}</div>
+  <div><strong>Issues</strong>{{.changieIssues}}</div>
+  <h2>Weather</h2>
+  <div><strong>Sunset</strong> at {{.dailyWeatherSunset}}</div>
+  {{range $index, $temp := .hourlyWeatherTemperatures}}
+    <div>{{$temp}} at {{ index $.hourlyWeatherTimes $index}}</div>
+  {{end}}

@@ -2,12 +2,21 @@ package configs
 
 import (
 	"errors"
-	"strings"
-	"strconv"
+	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/go-redis/redis/v8"
 )
+
+func ValueKey(name, value string) string {
+	return fmt.Sprintf("value:%v:%v", name, value)
+}
+
+func TimeKey(name string) string {
+	return fmt.Sprintf("next-update:%v", name)
+}
 
 // add redis:KEY as well for things like refresh tokens
 func stringOrEnvVar(value string) string {
@@ -41,10 +50,10 @@ func redisOptions() (*redis.Options, error) {
 	}
 
 	return &redis.Options{
-		Addr: addr,
+		Addr:     addr,
 		Username: user,
 		Password: pass,
-		DB: db,
+		DB:       db,
 	}, nil
 }
 

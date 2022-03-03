@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -15,12 +14,8 @@ func nowUTC() time.Time {
 	return time.Now().UTC()
 }
 
-func redisTimeKey(feedName string) string {
-	return fmt.Sprintf("next-update:%v", feedName)
-}
-
 func feedOutOfDate(ctx context.Context, feed *configs.FeedConfig, rdb *redis.Client) (bool, error) {
-	timeStr, err := rdb.Get(ctx, redisTimeKey(feed.Name)).Result()
+	timeStr, err := rdb.Get(ctx, configs.TimeKey(feed.Name)).Result()
 	if err == redis.Nil || err != nil {
 		return true, nil
 	}
@@ -48,6 +43,6 @@ func updateNextRun(ctx context.Context, feed *configs.FeedConfig, rdb *redis.Cli
 	}
 
 	nextTime := nowUTC().Add(dur).Format(timeFormat)
-	_, err = rdb.Set(ctx, redisTimeKey(feed.Name), nextTime, 0).Result()
+	_, err = rdb.Set(ctx, configs.TimeKey(feed.Name), nextTime, 0).Result()
 	return err
 }

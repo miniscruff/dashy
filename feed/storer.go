@@ -2,17 +2,17 @@ package main
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/tidwall/gjson"
 	"github.com/go-redis/redis/v8"
+	"github.com/miniscruff/dashy/configs"
+	"github.com/tidwall/gjson"
 )
 
 func storeResults(ctx context.Context, name string, results map[string]gjson.Result, rdb *redis.Client) error {
 	pipe := rdb.Pipeline()
 
 	for k, result := range results {
-		key := fmt.Sprintf("value:%v:%v", name, k)
+		key := configs.ValueKey(name, k)
 		if result.IsArray() {
 			for _, v := range result.Array() {
 				pipe.RPush(ctx, key, v.Value())

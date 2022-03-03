@@ -43,13 +43,12 @@ func (q FeedQuery) Request() (*http.Request, error) {
 
 type FeedSchedule struct {
 	Every string `yaml:"every"`
-	On    string `yaml:"on"`
 }
 
 type FeedStore struct {
 	Name  string `yaml:"name"`
 	Path  string `yaml:"path"`
-	Count int    `yaml:"count"`
+	Count int    `yaml:"count,omitempty"`
 }
 
 type FeedConfig struct {

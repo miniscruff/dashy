@@ -45,6 +45,12 @@ feeds:
       - name: times
         path: "data.#.timestamp_utc"
         count: 24
+      - name: description
+        path: "data.#.weather.description"
+        count: 24
+      - name: icon
+        path: "data.#.weather.icon"
+        count: 24
 
   - name: dailyWeather
     query:
@@ -63,13 +69,29 @@ feeds:
         path: "data.0.sunset_ts"
 
 view: |
-  <h1>Dashboard</h1>
-  <h2>Changie</h2>
-  <div><strong>Stars</strong>{{.changieStars}}</div>
-  <div><strong>Forks</strong>{{.changieForks}}</div>
-  <div><strong>Issues</strong>{{.changieIssues}}</div>
-  <h2>Weather</h2>
-  <div><strong>Sunset</strong> at {{.dailyWeatherSunset}}</div>
-  {{range $index, $temp := .hourlyWeatherTemperatures}}
-    <div>{{$temp}} at {{ index $.hourlyWeatherTimes $index}}</div>
-  {{end}}
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="description" content="Web site created using create-snowpack-app" />
+      <title>Dashboard</title>
+    </head>
+    <body>
+      <h2>Changie</h2>
+      <div><strong>Stars</strong>{{.changieStars}}</div>
+      <div><strong>Forks</strong>{{.changieForks}}</div>
+      <div><strong>Issues</strong>{{.changieIssues}}</div>
+      <h2>Weather</h2>
+      <div><strong>Sunset</strong> at {{.dailyWeatherSunset}}</div>
+      {{range $index, $temp := .hourlyWeatherTemperatures}}
+        <div>
+          <img width=32 height=32 src="https://www.weatherbit.io/static/img/icons/{{ index $.hourlyWeatherIcon $index}}.png" />
+          {{ index $.hourlyWeatherDescription $index }}
+        </div>
+        <div>
+          {{$temp}}&deg;F at {{ index $.hourlyWeatherTimes $index}}
+        </div>
+      {{end}}
+    </body>
+  </html>

@@ -11,7 +11,7 @@ import (
 	"github.com/miniscruff/dashy/configs"
 )
 
-func fetch(feed *configs.FeedConfig, config *configs.Config) (map[string]gjson.Result, error) {
+func fetch(feed *configs.FeedConfig) (map[string]gjson.Result, error) {
 	// might need configs for clients later...
 	client := &http.Client{}
 

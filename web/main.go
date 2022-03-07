@@ -78,5 +78,6 @@ func main() {
 			log.Println(fmt.Errorf("templating: %w", err))
 		}
 	})
+
 	http.ListenAndServe(":"+port, nil)
 }

@@ -10,6 +10,15 @@ type Config struct {
 	View     string       `yaml:"view"`
 }
 
+func (c *Config) FeedByName(name string) *FeedConfig {
+	for _, f := range c.Feeds {
+		if f.Name == name {
+			return &f
+		}
+	}
+	return nil
+}
+
 //go:embed config.yml
 var configBytes []byte
 

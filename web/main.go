@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"mime"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -90,6 +92,8 @@ func (s *Server) StaticFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ctype := mime.TypeByExtension(filepath.Ext(name))
+	w.Header().Add("Content-Type", ctype)
 	w.Write(fBytes)
 }
 

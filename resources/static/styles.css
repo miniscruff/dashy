@@ -1,9 +1,20 @@
-html {
-  --darkPrimary: #26A347;
-  --primary: #6EFF94;
-  --lightPrimary: #50F07B;
-  --accent: #A31519;
-  --lightAccent: #F04F54;
+:root {
+  --layer0: #2e3440;
+  --layer1: #3b4252;
+  --layer2: #434c5e;
+  --layer3: #4c566a;
+  --primary2: #d8dee9;
+  --primary1: #e5e9f0;
+  --primary #eceff4;
+  --accent1: #8fbcbb;
+  --accent: #88c0d0;
+  --accent2: #81a1c1;
+  --accent3: #5e81ac;
+  --error: #bf616a;
+  --danger: #d08770;
+  --warning: #ebcb8b;
+  --success: #a3be8c;
+  --neutral: #b48ead;
 }
 
 body {
@@ -14,10 +25,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--primary);
-  background: #303030;
+  background: var(--layer0);
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

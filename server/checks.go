@@ -1,21 +1,13 @@
-package main
+package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
-	"log"
-
-	"github.com/go-redis/redis/v8"
 
 	"github.com/miniscruff/dashy/configs"
 )
-
-const timeFormat = time.ANSIC
-
-func nowUTC() time.Time {
-	return time.Now().UTC()
-}
 
 func (s *Server) CheckFeedHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -71,23 +63,14 @@ func (s *Server) CheckFeed(feed *configs.FeedConfig) error {
 }
 
 func (s *Server) feedOutOfDate(feed *configs.FeedConfig) (bool, error) {
-	timeStr, err := s.RedisClient.Get(s.Ctx, configs.TimeKey(feed.Name)).Result()
-	if err == redis.Nil || err != nil {
+	nextRun, err := s.Store.GetNextRun(feed.Name)
+	if err != nil {
 		return true, nil
 	}
 
-	lastRun, err := time.Parse(timeFormat, timeStr)
-	if err != nil {
-		return false, err
-	}
-
 	if feed.Schedule.Every != "" {
-		return nowUTC().Sub(lastRun) > 0, nil
+		return time.Now().UTC().Sub(nextRun) > 0, nil
 	}
-
-	// on should also include a time zone
-	// rename on to At actually...
-	// if feed.Schedule.On != "" { }
 
 	return false, nil
 }

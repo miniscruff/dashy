@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"errors"
@@ -6,7 +6,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
+	"strings"
 
 	"github.com/miniscruff/dashy/configs"
 	"github.com/tidwall/gjson"
@@ -37,14 +39,14 @@ func (s *Server) UpdateFeedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) UpdateFeed(feed *configs.FeedConfig) error {
-	log.Printf("checking feed: %v\n", feed.Name)
+	log.Printf("updating feed: %v\n", feed.Name)
 
 	results, err := s.fetch(feed)
 	if err != nil {
 		return fmt.Errorf("unable to fetch data: %w", err)
 	}
 
-	err = s.storeResults(feed.Name, results)
+	err = s.Store.SetValues(feed.Name, results)
 	if err != nil {
 		return fmt.Errorf("unable to store data: %w", err)
 	}
@@ -58,11 +60,37 @@ func (s *Server) UpdateFeed(feed *configs.FeedConfig) error {
 	return nil
 }
 
+func (s *Server) request(query *configs.FeedQuery) (*http.Request, error) {
+	bodyReader := strings.NewReader(query.Body)
+
+	queryUrl := query.Url
+
+	params := url.Values{}
+	for k, v := range query.Params {
+		params.Set(k, url.QueryEscape(s.Store.StringOrVar(v)))
+	}
+
+	if len(params) > 0 {
+		queryUrl += "?" + params.Encode()
+	}
+
+	req, err := http.NewRequest(query.Method, queryUrl, bodyReader)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range query.Headers {
+		req.Header.Add(k, s.Store.StringOrVar(v))
+	}
+
+	return req, err
+}
+
 func (s *Server) fetch(feed *configs.FeedConfig) (map[string]gjson.Result, error) {
 	// might need configs for clients later...
 	client := &http.Client{}
 
-	req, err := feed.Query.Request()
+	req, err := s.request(&feed.Query)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create request from query: %w", err)
 	}
@@ -101,33 +129,12 @@ func (s *Server) fetch(feed *configs.FeedConfig) (map[string]gjson.Result, error
 	return results, nil
 }
 
-func (s *Server) storeResults(name string, results map[string]gjson.Result) error {
-	pipe := s.RedisClient.Pipeline()
-
-	for k, result := range results {
-		key := configs.ValueKey(name, k)
-		if result.IsArray() {
-			for _, v := range result.Array() {
-				pipe.RPush(s.Ctx, key, v.Value())
-			}
-			start := -int64(len(result.Array()))
-			pipe.LTrim(s.Ctx, key, start, -1)
-		} else {
-			pipe.Set(s.Ctx, key, result.Value(), 0)
-		}
-	}
-
-	_, err := pipe.Exec(s.Ctx)
-	return err
-}
-
 func (s *Server) updateNextRun(feed *configs.FeedConfig) error {
 	dur, err := time.ParseDuration(feed.Schedule.Every)
 	if err != nil {
 		return err
 	}
 
-	nextTime := nowUTC().Add(dur).Format(timeFormat)
-	_, err = s.RedisClient.Set(s.Ctx, configs.TimeKey(feed.Name), nextTime, 0).Result()
-	return err
+	nextTime := time.Now().UTC().Add(dur)
+	return s.Store.SetNextRun(feed.Name, nextTime)
 }

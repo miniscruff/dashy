@@ -41,7 +41,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   const response = await fetch('/api/values');
   const values = await response.json();
 
-  const weatherCard = addCard("Weather", ["grid-width-4", "card-column-flex"]);
+  const weatherCard = addCard("Weather", ["card-column-flex"]);
+  // temp hack for the weather card being 5 wide
+  weatherCard.parentElement.classList.add("grid-span-5");
   for (let i = 0; i < values.weather.descriptions.length; i++) {
     const des = values.weather.descriptions[i];
     const icon = values.weather.icons[i];
@@ -68,7 +70,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const reportDiv = createDiv("layer3");
     reportDiv.appendChild(iconImg)
-    addDivText(reportDiv, `${temp}F`);
+    addDivText(reportDiv, `${Math.round(temp)}F`);
     addDivText(reportDiv, timeText);
     weatherCard.appendChild(reportDiv);
   }

@@ -26,72 +26,34 @@ feeds:
     - name: forks
       path: "data.repository.forkCount"
 
-  - name: hourlyWeather
+  - name: weather
     query:
-      url: https://api.weatherbit.io/v2.0/forecast/hourly
+      url: https://api.openweathermap.org/data/2.5/onecall
       params:
-        key: "env:WEATHERBIT_AUTH"
-        hours: 24
+        APPID: "env:OPENWEATHER_AUTH"
+        units: "imperial"
         lat: "env:HOME_LAT"
         lon: "env:HOME_LON"
-        units: I
+        exclude: "minutely,current"
       status: 200
     schedule:
       every: 2h
     store:
-      - name: temperatures
-        path: "data.#.temp"
-        count: 24
-      - name: times
-        path: "data.#.timestamp_utc"
-        count: 24
-      - name: description
-        path: "data.#.weather.description"
-        count: 24
-      - name: icon
-        path: "data.#.weather.icon"
-        count: 24
-
-  - name: dailyWeather
-    query:
-      url: https://api.weatherbit.io/v2.0/forecast/daily
-      params:
-        key: "env:WEATHERBIT_AUTH"
-        days: 1
-        lat: "env:HOME_LAT"
-        lon: "env:HOME_LON"
-        units: I
-      status: 200
-    schedule:
-      every: 12h
-    store:
       - name: sunset
-        path: "data.0.sunset_ts"
-
-view: |
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta name="description" content="Web site created using create-snowpack-app" />
-      <title>Dashboard</title>
-    </head>
-    <body>
-      <h2>Changie</h2>
-      <div><strong>Stars</strong>{{.changieStars}}</div>
-      <div><strong>Forks</strong>{{.changieForks}}</div>
-      <div><strong>Issues</strong>{{.changieIssues}}</div>
-      <h2>Weather</h2>
-      <div><strong>Sunset</strong> at {{.dailyWeatherSunset}}</div>
-      {{range $index, $temp := .hourlyWeatherTemperatures}}
-        <div>
-          <img width=32 height=32 src="https://www.weatherbit.io/static/img/icons/{{ index $.hourlyWeatherIcon $index}}.png" />
-          {{ index $.hourlyWeatherDescription $index }}
-        </div>
-        <div>
-          {{$temp}}&deg;F at {{ index $.hourlyWeatherTimes $index}}
-        </div>
-      {{end}}
-    </body>
-  </html>
+        path: "daily.sunset"
+      - name: alertEvents
+        path: "alerts.0.event"
+      - name: alertDescriptions
+        path: "alerts.0.description"
+      - name: temperatures
+        path: "hourly.#.temp"
+        count: 48
+      - name: times
+        path: "hourly.#.dt"
+        count: 48
+      - name: icons
+        path: "hourly.#.weather.0.icon"
+        count: 48
+      - name: descriptions
+        path: "hourly.#.weather.0.description"
+        count: 48

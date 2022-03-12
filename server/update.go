@@ -46,7 +46,7 @@ func (s *Server) UpdateFeed(feed *configs.FeedConfig) error {
 		return fmt.Errorf("unable to fetch data: %w", err)
 	}
 
-	err = s.Store.SetValues(feed.Name, results)
+	err = s.Store.SetValues(feed, results)
 	if err != nil {
 		return fmt.Errorf("unable to store data: %w", err)
 	}
@@ -136,5 +136,5 @@ func (s *Server) updateNextRun(feed *configs.FeedConfig) error {
 	}
 
 	nextTime := time.Now().UTC().Add(dur)
-	return s.Store.SetNextRun(feed.Name, nextTime)
+	return s.Store.SetNextRun(feed, nextTime)
 }

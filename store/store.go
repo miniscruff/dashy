@@ -3,6 +3,7 @@ package store
 import (
 	"time"
 
+	"github.com/miniscruff/dashy/configs"
 	"github.com/tidwall/gjson"
 )
 
@@ -10,8 +11,8 @@ const timeFormat = time.ANSIC
 
 type Store interface {
 	StringOrVar(value string) string
-	GetNextRun(feedName string) (time.Time, error)
-	SetNextRun(feedName string, nextRun time.Time) error
+	GetNextRun(feed *configs.FeedConfig) (time.Time, error)
+	SetNextRun(feed *configs.FeedConfig, nextRun time.Time) error
 	GetValues() (map[string]map[string]interface{}, error)
-	SetValues(feedName string, values map[string]gjson.Result) error
+	SetValues(feed *configs.FeedConfig, values map[string]gjson.Result) error
 }

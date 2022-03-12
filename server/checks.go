@@ -63,7 +63,7 @@ func (s *Server) CheckFeed(feed *configs.FeedConfig) error {
 }
 
 func (s *Server) feedOutOfDate(feed *configs.FeedConfig) (bool, error) {
-	nextRun, err := s.Store.GetNextRun(feed.Name)
+	nextRun, err := s.Store.GetNextRun(feed)
 	if err != nil {
 		return true, nil
 	}

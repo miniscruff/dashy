@@ -6,7 +6,7 @@
   --layer3: #4c566a;
   --primary2: #d8dee9;
   --primary1: #e5e9f0;
-  --primary #eceff4;
+  --primary: #eceff4;
   --accent1: #8fbcbb;
   --accent: #88c0d0;
   --accent2: #81a1c1;
@@ -27,8 +27,56 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--primary);
   background: var(--layer0);
+  padding: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.card {
+  background: var(--layer1);
+  border-radius: 10px;
+}
+
+.card-header {
+  background: var(--layer3);
+  font-size: larger;
+  padding: 0.5rem;
+  border-radius: 10px 10px 0 0;
+  text-align: center;
+}
+
+.card-layout {
+  padding: 0.5rem;
+}
+
+.card-width-4 {
+  grid-column-start: 0;
+  grid-column-end: 3;
+}
+
+.layer3 {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 10px;
 }

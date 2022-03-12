@@ -69,8 +69,8 @@ func (s *RedisStore) StringOrVar(value string) string {
 	return value
 }
 
-func (s *RedisStore) GetNextRun(feedName string) (time.Time, error) {
-	timeStr, err := s.client.Get(s.ctx, timeKey(feedName)).Result()
+func (s *RedisStore) GetNextRun(feed *configs.FeedConfig) (time.Time, error) {
+	timeStr, err := s.client.Get(s.ctx, timeKey(feed.Name)).Result()
 	if err == redis.Nil || err != nil {
 		return time.Time{}, nil
 	}
@@ -78,9 +78,9 @@ func (s *RedisStore) GetNextRun(feedName string) (time.Time, error) {
 	return time.Parse(timeFormat, timeStr)
 }
 
-func (s *RedisStore) SetNextRun(feedName string, nextRun time.Time) error {
+func (s *RedisStore) SetNextRun(feed *configs.FeedConfig, nextRun time.Time) error {
 	timeFormatted := nextRun.Format(timeFormat)
-	_, err := s.client.Set(s.ctx, timeKey(feedName), timeFormatted, 0).Result()
+	_, err := s.client.Set(s.ctx, timeKey(feed.Name), timeFormatted, 0).Result()
 	return err
 }
 
@@ -127,11 +127,11 @@ func (s *RedisStore) GetValues() (map[string]map[string]interface{}, error) {
 	return data, nil
 }
 
-func (s *RedisStore) SetValues(feedName string, values map[string]gjson.Result) error {
+func (s *RedisStore) SetValues(feed *configs.FeedConfig, values map[string]gjson.Result) error {
 	pipe := s.client.Pipeline()
 
 	for k, result := range values {
-		key := valueKey(feedName, k)
+		key := valueKey(feed.Name, k)
 		if result.IsArray() {
 			for _, v := range result.Array() {
 				pipe.RPush(s.ctx, key, v.Value())

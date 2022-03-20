@@ -6,11 +6,6 @@ import (
 	"time"
 )
 
-type Config struct {
-	Feeds []FeedConfig `yaml:"feeds"`
-	Env   EnvConfig
-}
-
 func NewConfig(configYml []byte) (*Config, error) {
 	var c Config
 
@@ -24,6 +19,11 @@ func NewConfig(configYml []byte) (*Config, error) {
 	}
 
 	return &c, nil
+}
+
+type Config struct {
+	Feeds []FeedConfig `yaml:"feeds"`
+	Env   EnvConfig
 }
 
 type FeedConfig struct {

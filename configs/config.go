@@ -87,7 +87,7 @@ type EnvConfig struct {
 type Dashboard struct {
 	Title        string            `yaml:"title"`
 	Meta         map[string]string `yaml:"meta,omitempty"`
-	CustomStyles map[string]string          `yaml:"customStyles,omitempty"`
+	CustomStyles map[string]string `yaml:"customStyles,omitempty"`
 	Layers       []Layer           `yaml:"layers"`
 }
 

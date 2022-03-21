@@ -15,9 +15,10 @@ import (
 
 type Server struct {
 	StaticFS  embed.FS
-	IndexFile []byte
 	Config    *configs.Config
 	Store     store.Store
+
+	indexFile []byte
 }
 
 func (s *Server) StaticFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,15 +37,6 @@ func (s *Server) StaticFileHandler(w http.ResponseWriter, r *http.Request) {
 	ctype := mime.TypeByExtension(filepath.Ext(name))
 	w.Header().Add("Content-Type", ctype)
 	w.Write(fBytes)
-}
-
-func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" || r.Method != http.MethodGet {
-		http.NotFound(w, r)
-		return
-	}
-
-	w.Write(s.IndexFile)
 }
 
 func (s *Server) Serve() error {
@@ -69,6 +61,7 @@ func (s *Server) Serve() error {
 	}()
 	// run at startup as well
 	go s.CheckAllFeeds()
+	go s.GenerateIndex()
 
 	host := fmt.Sprintf("%v:%v", s.Config.Env.Address, s.Config.Env.Port)
 	log.Println("listening on", host)

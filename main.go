@@ -16,9 +16,6 @@ var (
 	//go:embed resources/static
 	staticFS embed.FS
 
-	//go:embed resources/index.html
-	indexFile []byte
-
 	//go:embed config.yml
 	configBytes []byte
 )
@@ -39,7 +36,6 @@ func main() {
 
 	server := server.Server{
 		StaticFS:  staticFS,
-		IndexFile: indexFile,
 		Config:    cfg,
 		Store:     redisStore,
 	}

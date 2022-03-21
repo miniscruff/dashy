@@ -1,0 +1,30 @@
+{
+	"singleString": "hello world",
+	"singleNumber": 5,
+	"arrayString": ["A", "B", "C", "D", "E"],
+	"arrayNumbers": [1, 2, 3, 4, 5 ],
+	"object": {
+		"inner": {
+			"cereal": "fruit loops",
+			"milk": "oats"
+		}
+	},
+	"arrayObjects": [
+		{
+			"name": "Jim",
+			"salary": 45000
+		},
+		{
+			"name": "Sarah",
+			"salary": 47000
+		},
+		{
+			"name": "Frank",
+			"salary": 125000
+		},
+		{
+			"name": "Ashley",
+			"salary": 135000
+		}
+	]
+}

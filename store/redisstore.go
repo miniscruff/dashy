@@ -91,10 +91,10 @@ func (s *RedisStore) GetValues() (map[string]map[string]interface{}, error) {
 	for _, feed := range s.config.Feeds {
 		for _, store := range feed.Store {
 			key := valueKey(feed.Name, store.Name)
-			if store.Count > 0 {
-				pipe.LRange(s.ctx, key, 0, int64(store.Count))
+			if store.IsArray {
+				pipe.LRange(s.ctx, key, 0, -1)
 			} else {
-				pipe.Get(s.ctx, valueKey(feed.Name, store.Name))
+				pipe.Get(s.ctx, key)
 			}
 			keys = append(keys, feed.Name+"|"+store.Name)
 		}

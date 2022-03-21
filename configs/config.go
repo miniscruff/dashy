@@ -22,8 +22,9 @@ func NewConfig(configYml []byte) (*Config, error) {
 }
 
 type Config struct {
-	Feeds []FeedConfig `yaml:"feeds"`
-	Env   EnvConfig
+	Feeds     []FeedConfig `yaml:"feeds"`
+	Env       EnvConfig
+	Dashboard Dashboard `yaml:"dashboard"`
 }
 
 type FeedConfig struct {
@@ -47,9 +48,9 @@ type FeedSchedule struct {
 }
 
 type FeedStore struct {
-	Name  string `yaml:"name"`
-	Path  string `yaml:"path"`
-	Count int    `yaml:"count,omitempty"`
+	Name    string `yaml:"name"`
+	Path    string `yaml:"path"`
+	IsArray bool   `yaml:"isArray,omitempty"`
 }
 
 func (c *Config) FeedByName(name string) *FeedConfig {
@@ -72,4 +73,37 @@ type EnvConfig struct {
 	Port         string        `env:"PORT" envDefault:"8080"`
 	Address      string        `env:"ADDRESS" envDefault:"0.0.0.0"`
 	TickDuration time.Duration `env:"TICK_DURATION" envDefault:"15m"`
+}
+
+/*
+	Dashboard is the visual UI dashboard and its config
+	It starts out at the base HTML level with meta and custom layouts / styles ( later )
+	It also defines how many columns the grid should have
+
+	Then you can define a number of layers:
+		Each layer can have basic content or contents
+*/
+
+type Dashboard struct {
+	Title        string            `yaml:"title"`
+	Meta         map[string]string `yaml:"meta,omitempty"`
+	CustomStyles map[string]string          `yaml:"customStyles,omitempty"`
+	Layers       []Layer           `yaml:"layers"`
+}
+
+type Layer struct {
+	Name     string    `yaml:"name"`
+	Title    string    `yaml:"title,omitempty"`
+	X        int       `yaml:"x"`
+	Y        int       `yaml:"y"`
+	Width    int       `yaml:"width"`
+	Height   int       `yaml:"height"`
+	Layout   string    `yaml:"layout"`
+	Contents []Content `yaml:"contents"`
+}
+
+type Content struct {
+	Type   string   `yaml:"type"`
+	Styles []string `yaml:"styles"`
+	Text   string   `yaml:"text"`
 }

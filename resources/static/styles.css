@@ -27,28 +27,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--primary);
   background: var(--layer0);
-  padding: 1em;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: .25rem;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
-.text-left {
-  text-align: left;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.text-center {
-  text-align: center;
-}
-
+/*
 .card {
   background: var(--layer1);
   border-radius: 10px;
@@ -93,3 +74,4 @@ code {
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   grid-gap: 10px;
 }
+*/

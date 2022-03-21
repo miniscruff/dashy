@@ -1,59 +1,56 @@
 feeds:
-  - name: changie
+  - name: sample
     query:
-      headers:
-        authorization: "env:GITHUB_AUTH"
-        content-type: "application/json; charset=utf-8"
-      url: https://api.github.com/graphql
-      method: POST
-      body: '{ "query": "{
-        repository(name: \"changie\", owner: \"miniscruff\") {
-          stargazerCount
-          forkCount
-          issues(states: OPEN) {
-            totalCount
-          }
-        }
-      }" }'
+      url: http://localhost:8080/static/sample.json
+      method: GET
       status: 200
     schedule:
       every: 3h
     store:
-    - name: stars
-      path: "data.repository.stargazerCount"
-    - name: issues
-      path: "data.repository.issues.totalCount"
-    - name: forks
-      path: "data.repository.forkCount"
+    - name: string
+      path: "singleString"
+    - name: number
+      path: "singleNumber"
+    - name: arrayStrings
+      path: "arrayString"
+      isArray: true
+    - name: arrayNumbers
+      path: "arrayNumbers"
+      isArray: true
+    - name: objectCereal
+      path: "object.inner.cereal"
+    - name: objectMilk
+      path: "object.inner.milk"
+        # - name: arrayObjectNames
+        # path: "arrayObjects.#.name"
+        # - name: arrayObjectSalaries
+        # path: "arrayObjects.#.salary"
 
-  - name: weather
-    query:
-      url: https://api.openweathermap.org/data/2.5/onecall
-      params:
-        APPID: "env:OPENWEATHER_AUTH"
-        units: "imperial"
-        lat: "env:HOME_LAT"
-        lon: "env:HOME_LON"
-        exclude: "minutely,current"
-      status: 200
-    schedule:
-      every: 2h
-    store:
-      - name: sunset
-        path: "daily.sunset"
-      - name: alertEvents
-        path: "alerts.0.event"
-      - name: alertDescriptions
-        path: "alerts.0.description"
-      - name: temperatures
-        path: "hourly.#.temp"
-        count: 48
-      - name: times
-        path: "hourly.#.dt"
-        count: 48
-      - name: icons
-        path: "hourly.#.weather.0.icon"
-        count: 48
-      - name: descriptions
-        path: "hourly.#.weather.0.description"
-        count: 48
+dashboard:
+  title: "Dashboard"
+  # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name
+  meta:
+    viewport: "width=device-width, initial-scale=1"
+      #layout: 
+      # main dashboard body layout, currently hard coded at a 4 column grid
+  layers:
+    - name: "single-values" # used as an id
+      x: 0 # x,y,w,h of our layer in the parent grid
+      y: 0
+      width: 1
+      height: 1
+      title: "Singles" # optional text title to add
+      layout: two-columns
+      contents:
+        - type: constant
+          styles: ["text-right", "text-large"]
+          text: "String"
+        - type: text # currently just basic text, image and more later
+          styles: ["text-left", "text-large"]
+          text: "${data.sample.string}"
+        - type: constant # currently just basic text, image and more later
+          styles: ["text-right", "text-large"]
+          text: "Number"
+        - type: text
+          styles: ["text-left", "text-large"]
+          text: "${data.sample.number}"
